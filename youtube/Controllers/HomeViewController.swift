@@ -102,13 +102,16 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         let moreButton = UIBarButtonItem(image: moreImage, style: .plain, target: self, action: #selector(handleMore))
         navigationItem.rightBarButtonItems = [moreButton,searchButton]
     }
+    let settingLauncher = SettingsLauncher()
+    @objc func handleMore() {
+        //Show menu
+        settingLauncher.showSettings()
+    }
+    
+    let blackView = UIView()
     
     @objc func handleSearch() {
         print("handleSearch")
-    }
-    
-    @objc func handleMore() {
-        print("handleMore")
     }
     
     let menuBar: MenuBar = {

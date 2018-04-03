@@ -16,12 +16,14 @@ class BaseCell: UICollectionViewCell {
     }
     
     func setupViews() {
-        print("From base cell ******")
+        print("setupViews From base cell ******")
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
     
 }
 
