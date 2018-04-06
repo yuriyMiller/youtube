@@ -102,10 +102,24 @@ class HomeViewController: UICollectionViewController, UICollectionViewDelegateFl
         let moreButton = UIBarButtonItem(image: moreImage, style: .plain, target: self, action: #selector(handleMore))
         navigationItem.rightBarButtonItems = [moreButton,searchButton]
     }
-    let settingLauncher = SettingsLauncher()
+    lazy var settingLauncher: SettingsLauncher = {
+       let launcher = SettingsLauncher()
+        launcher.homeController = self
+        return launcher
+    }()
+    
     @objc func handleMore() {
         //Show menu
         settingLauncher.showSettings()
+    }
+    
+    func showControllerForSettings(setting: Setting) {
+        let dummyVC = UIViewController()
+        dummyVC.navigationItem.title = setting.name.rawValue
+        dummyVC.view.backgroundColor = UIColor()
+        self.navigationController?.navigationBar.tintColor = UIColor.white
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor : UIColor.white]
+        self.navigationController?.pushViewController(dummyVC, animated: false)
     }
     
     let blackView = UIView()

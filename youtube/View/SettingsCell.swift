@@ -25,13 +25,12 @@ class SettingsCell: BaseCell {
             backgroundColor = isHighlighted ? UIColor.darkGray : UIColor.white
             nameLabel.textColor = isHighlighted ? UIColor.white : UIColor.black
             iconImage.tintColor = isHighlighted ? UIColor.white : UIColor.darkGray
-            
         }
     }
     
     var settings: Setting? {
         didSet {
-            nameLabel.text = settings?.name
+            nameLabel.text = settings?.name.rawValue
             if let imageName = settings?.imageName {
                 iconImage.image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
                 iconImage.tintColor = UIColor.darkGray

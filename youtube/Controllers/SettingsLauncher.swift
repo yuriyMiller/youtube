@@ -9,13 +9,22 @@
 import UIKit
 
 class Setting: NSObject {
-    let name: String
+    let name: SettingName
     let imageName: String
     
-    init(name: String, imageName: String) {
+    init(name: SettingName, imageName: String) {
         self.name = name
         self.imageName = imageName
     }
+}
+
+enum SettingName: String {
+    case Cancel = "Cancel"
+    case Settings = "Settings"
+    case Term = "Term & private policy"
+    case Feedback = "Send Feedback"
+    case Help = "Help"
+    case SwitchAccount = "Switch Account"
 }
 
 class SettingsLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
@@ -23,13 +32,18 @@ class SettingsLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDele
     let cellHeight: CGFloat = 50
     
     let settingArray: [Setting] = {
-        return [Setting(name: "Settings", imageName: "settings"),
-                Setting(name: "Term & private policy", imageName: "privacy"),
-                Setting(name: "Send Feedback", imageName: "feedback"),
-                Setting(name: "Help", imageName: "help"),
-                Setting(name: "Switch Account", imageName: "switch_account"),
-                Setting(name: "Cancel", imageName: "cancel")]
+        
+        let settingsSetting = Setting(name: SettingName.Settings, imageName: "settings")
+        let cancelSetting = Setting(name: SettingName.Cancel, imageName: "cancel")
+        let feedbcakSetting = Setting(name: SettingName.Feedback, imageName: "feedback")
+        let termSetting = Setting(name: SettingName.Term, imageName: "privacy")
+        let helpSetting = Setting(name: SettingName.Help, imageName: "help")
+        let switchSetting = Setting(name: SettingName.SwitchAccount, imageName: "switch_account")
+        
+        return [settingsSetting, termSetting, feedbcakSetting, helpSetting, switchSetting, cancelSetting]
     }()
+    
+    var homeController: HomeViewController?
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return settingArray.count
@@ -50,6 +64,14 @@ class SettingsLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDele
         return 0
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let settingName = settingArray[indexPath.row].name
+        print(settingName)
+        let setting = self.settingArray[indexPath.row]
+        handleDismiss(setting: setting)
+    }
+    
+    
     let blackView = UIView()
     
     let colletionView: UICollectionView = {
@@ -64,7 +86,7 @@ class SettingsLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDele
         if let window = UIApplication.shared.keyWindow {
             
             blackView.backgroundColor = UIColor(white: 0, alpha: 0.5)
-            blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDismiss)))
+            blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDismiss(setting:))))
             window.addSubview(blackView)
             
             
@@ -84,12 +106,24 @@ class SettingsLauncher: NSObject, UICollectionViewDelegate, UICollectionViewDele
         }
     }
     
-    @objc func handleDismiss() {
+    @objc func handleDismiss(setting: Setting) {
         print("handleDismiss")
-        UIView.animate(withDuration: 0.5) {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             if let window = UIApplication.shared.keyWindow {
                 self.blackView.alpha = 0
-                self.colletionView.frame = CGRect(x: 0, y: window.frame.height, width: self.colletionView.frame.width, height: self.colletionView.frame.height)
+                self.colletionView.frame = CGRect(x: 0,
+                                                   y: window.frame.height,
+                                                  width: self.colletionView.frame.width,
+                                                  height: self.colletionView.frame.height)
+            }
+        }) { (completed: Bool) in
+//            let temp: String = setting.name
+//            print(temp)
+            
+            if setting.isKind(of: Setting.self) {
+                if setting.name != .Cancel {
+                    self.homeController?.showControllerForSettings(setting: setting)
+                }
             }
         }
     }
